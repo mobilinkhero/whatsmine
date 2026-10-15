@@ -7,6 +7,7 @@ use App\Modules\Integrations\Services\CredentialResolver;
 use App\Modules\Whatsapp\Jobs\TemplateSyncJob;
 use App\Modules\Whatsapp\Models\WhatsappBusinessAccount;
 use App\Modules\Whatsapp\Services\CloudApiClient;
+use App\Modules\Whatsapp\Services\SmbSyncService;
 use App\Modules\Shared\Models\ChannelAccount;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -162,7 +163,26 @@ class WhatsappEmbeddedSignupController extends Controller
             TemplateSyncJob::dispatch($waba->id)->onQueue('whatsapp');
         }
 
-        $warnings = array_filter([$webhookError, $syncError, $phoneCount === 0 ? 'No phone numbers were synced. Use Sync from Meta on Channel Setup or reconnect.' : null]);
+        // Initiate SMB sync (contacts + chat history) for WhatsApp Business app onboarding
+        $smbSyncError = null;
+        if (! empty($validated['phone_number_id'])) {
+            try {
+                $smbSync = app(SmbSyncService::class);
+                $syncResult = $smbSync->syncAll($validated['phone_number_id'], $accessToken);
+
+                if (! $syncResult['ok']) {
+                    $smbSyncError = $syncResult['error'] ?? 'SMB sync failed';
+                }
+            } catch (\Throwable $e) {
+                $smbSyncError = $e->getMessage();
+                Log::warning('WhatsApp embedded signup: SMB sync exception', [
+                    'waba_id' => $validated['waba_id'],
+                    'error'   => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $warnings = array_filter([$webhookError, $syncError, $smbSyncError, $phoneCount === 0 ? 'No phone numbers were synced. Use Sync from Meta on Channel Setup or reconnect.' : null]);
 
         return response()->json([
             'success'         => true,
@@ -170,6 +190,7 @@ class WhatsappEmbeddedSignupController extends Controller
             'name'            => $wabaData['name'] ?? $validated['waba_id'],
             'phone_count'     => $phoneCount,
             'sync_error'      => $syncError,
+            'smb_sync_error'  => $smbSyncError,
             'webhook_warning' => $warnings !== [] ? implode(' ', $warnings) : null,
         ]);
     }

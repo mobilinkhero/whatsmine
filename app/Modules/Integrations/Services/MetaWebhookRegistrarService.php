@@ -17,7 +17,7 @@ class MetaWebhookRegistrarService
 {
     private const BASE = 'https://graph.facebook.com/v20.0';
 
-    private const WA_FIELDS = 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update';
+    private const WA_FIELDS = 'messages,message_template_status_update,phone_number_name_update,phone_number_quality_update,account_update,history,smb_app_state_sync,smb_message_echoes';
 
     private const MESSENGER_FIELDS = 'messages,messaging_postbacks,messaging_optins,message_deliveries,message_reads,message_echoes';
 

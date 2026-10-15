@@ -39,6 +39,12 @@ Route::middleware('throttle:webhooks')->group(function () {
         Route::post('/{token}', [MetaWebhookController::class, 'receive'])->name('receive');
     });
 
+    // ─── WhatsApp Business App (SMB / Coexistence) ──────────────────────────────
+    Route::prefix('webhooks/whatsapp-smb')->name('webhooks.whatsapp-smb.')->group(function () {
+        Route::get('/{token}', [WhatsappSmbWebhookController::class, 'verify'])->name('verify');
+        Route::post('/{token}', [WhatsappSmbWebhookController::class, 'receive'])->name('receive');
+    });
+
     // ─── SMS delivery status (Twilio, Nexmo/Vonage, MessageBird) ─────────────────
     Route::post('webhooks/sms/{provider}', [SmsStatusWebhookController::class, 'handle'])
         ->name('webhooks.sms.status')
