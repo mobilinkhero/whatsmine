@@ -972,7 +972,7 @@ function EmbeddedSignupButton({ configId, appId, channel, label, color, onCode, 
         const sessionInfoPromise = isWhatsapp ? waitForWabaSessionInfo() : Promise.resolve(null);
 
         const extrasMap = {
-            whatsapp:  { setup: {}, featureType: 'whatsapp_business_app_onboarding', sessionInfoVersion: '3' },
+            whatsapp:  { setup: {}, featureType: 'whatsapp_business_app_onboarding', sessionInfoVersion: '5' },
             instagram: { feature_type: 'instagram_management' },
             messenger: { feature_type: 'messenger_chat' },
         };
