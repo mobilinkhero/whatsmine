@@ -1,0 +1,1 @@
+{"app_name":"Test","app_url":"http://127.0.0.1:8000","app_env":"local","db_host":"127.0.0.1","db_port":"3306","db_database":"aaaaa","db_username":"root","db_password":"","admin_name":"Admin","admin_email":"admin@test.com","admin_password":"password123","admin_password_confirmation":"password123","import_demo":false}
