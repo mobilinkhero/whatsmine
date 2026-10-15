@@ -1,1 +1,15 @@
 /node_modules
+/vendor
+/public/build
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/.env
+/.env.backup
+/.idea
+/.vscode
+/.DS_Store
+*.log
+/public/storage
+/install_data.json
